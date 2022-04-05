@@ -6,7 +6,7 @@ namespace DotnetElkDemo.Controllers;
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
+    private static readonly string[] Summaries =
     {
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
@@ -29,7 +29,7 @@ public class WeatherForecastController : ControllerBase
                 Summaries[rng.Next(Summaries.Length)]
             )
         ).ToArray();
-        
+
         _logger.LogInformation("The highest temperature was {Temperature}", forecast.Max(x => x.TemperatureC));
 
         return forecast;

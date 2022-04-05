@@ -30,8 +30,9 @@ public static class Program
         }
     }
 
-    private static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
+    private static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
             .UseSerilog((context, services, configuration) => configuration
                 .ReadFrom.Configuration(context.Configuration)
                 .ReadFrom.Services(services)
@@ -45,9 +46,10 @@ public static class Program
                 )
             )
             .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+    }
 
     /// <summary>
-    /// Configura o sink para enviar os dados para um cluster configurado do Elastic Cloud.
+    ///     Configura o sink para enviar os dados para um cluster configurado do Elastic Cloud.
     /// </summary>
     /// <param name="configuration">Fontes de configurações do .NET.</param>
     private static ElasticsearchSinkOptions BuildElasticSearchSinkOptions(IConfiguration configuration)
@@ -57,9 +59,12 @@ public static class Program
         return new ElasticsearchSinkOptions(new CloudConnectionPool(elasticCloudOptions.CloudId,
             new BasicAuthenticationCredentials(elasticCloudOptions.UserName, elasticCloudOptions.Password)))
         {
-            AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
-            AutoRegisterTemplate = true,
-            IndexFormat = "dotnetelkdemo"
+            // Defina o nome do índice.
+            IndexFormat = "dotnetelkdemo",
+            // Configuração necessária para data streams de logs.
+            BatchAction = ElasticOpType.Create,
+            // É necessária essa configuração para o ElasticSearch > 8.0.0.
+            TypeName = null
         };
     }
 }
